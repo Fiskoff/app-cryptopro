@@ -55,6 +55,22 @@ class CryptoProService:
 
             certificate = certificates_collection.Item(1)
             self._validate_certificate_object(certificate, self._thumbprint)
+            self._certificate_cache = certificate
+            logger.info(f"Сертификат успешно загружен: {certificate.SubjectName}")
+            return certificate
+
+        except Exception as error:
+            logger.error(f"Ошибка доступа к хранилищу сертификатов: {error}")
+            if isinstance(error, CertificateNotFoundError):
+                raise
+            raise CertificateNotFoundError(f"Не удалось получить сертификат: {error}") from error
+
+        finally:
+            if store is not None:
+                try:
+                    store.Close()
+                except Exception as error:
+                    logger.warning(f"{error}: Не удалось закрыть хранилище сертификатов")
 
     @staticmethod
     def _validate_certificate_object(certificate: Any, thumbprint: str) -> None:
