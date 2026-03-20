@@ -93,7 +93,7 @@ class CryptoProService:
                 f"Подпись невозможна. Убедитесь, что контейнер закрытого ключа установлен и доступен."
             )
         logger.debug(f"Проверка закрытого ключа для '{thumbprint}' успешна.")
-    
+
     def signature_data(self, data: str) -> str:
         """
         Создает открепленную электронную подпись (Detached Signature) для строки данных
@@ -133,3 +133,13 @@ class CryptoProService:
         except Exception as error:
             logger.exception("Критическая ошибка при создании подписи")
             raise SigningError(f"Не удалось подписать данные: {error}") from error
+
+    @property
+    def subject_name(self) -> str:
+        """Возвращает имя владельца сертификата (Subject Name)."""
+        return self._get_certificate().SubjectName
+
+    @property
+    def thumbprint(self) -> str:
+        """Возвращает отпечаток сертификата."""
+        return self._thumbprint
