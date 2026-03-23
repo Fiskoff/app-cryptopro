@@ -93,7 +93,7 @@ class CryptoProService:
             )
         logger.debug(f"Проверка закрытого ключа для '{thumbprint}' успешна.")
 
-    def signature_data(self, data: str) -> str:
+    async def signature_data(self, data: str) -> str:
         """
         Создает открепленную электронную подпись (Detached Signature) для строки данных
         Использует ГОСТ Р 34.11-2012 (256 бит), результат кодируется в Base64

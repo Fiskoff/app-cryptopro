@@ -5,20 +5,20 @@ import httpx
 from app.core import Settings, GirVuAuthError, SigningError, CertificateNotFoundError
 from app.services import CryptoProService
 
-
 logger = logging.getLogger(__name__)
 
 
 class GirVuAuthClient:
-    """Клиент для авторизации в системе ГИР ВУ. Реализует процедуру получения токена"""
+    """Асинхронный клиент для авторизации в системе ГИР ВУ. Реализует процедуру получения токена"""
+
     def __init__(self, settings: Settings, crypto_service: CryptoProService):
         self.settings = settings
         self.crypto = crypto_service
         self._token: str | None = None
 
-        self.http_client = httpx.Client(timeout=30.0)
+        self.http_client = httpx.AsyncClient(timeout=30.0)
 
-    def _prepare_payload(self) -> dict:
+    async def _prepare_payload(self) -> dict:
         """
         Формирует payload для запроса авторизации
 
@@ -30,7 +30,9 @@ class GirVuAuthClient:
         """
         try:
             data_to_sign = self.settings.signature_string
-            signature_b64 = self.crypto.signature_data(data_to_sign)
+
+            signature_b64 = await self.crypto.signature_data(data_to_sign)
+
             logger.debug("Данные успешно подписаны")
 
             payload = {
@@ -46,7 +48,7 @@ class GirVuAuthClient:
             logger.error(f"Не удалось подготовить данные для авторизации: {error}")
             raise GirVuAuthError(f"Ошибка подготовки подписи: {error}") from error
 
-    def login(self) -> str:
+    async def login(self) -> str:
         """
         Выполняет запрос на получение токена.
 
@@ -60,12 +62,12 @@ class GirVuAuthClient:
             logger.warning("Токен уже получен")
 
         try:
-            payload = self._prepare_payload()
+            payload = await self._prepare_payload()
             headers = {"Content-Type": "application/json"}
 
             logger.info(f"Отправка запроса авторизации на {self.settings.api_url}")
 
-            response = self.http_client.post(
+            response = await self.http_client.post(
                 url=self.settings.api_url,
                 json=payload,
                 headers=headers
@@ -122,12 +124,14 @@ class GirVuAuthClient:
             "Content-Type": "application/json"
         }
 
-    def close(self):
-        """Закрытие HTTP сессии."""
-        self.http_client.close()
+    async def close(self):
+        """Закрытие асинхронной HTTP сессии."""
+        await self.http_client.aclose()
 
-    def __enter__(self):
+    async def __aenter__(self):
+        """Старт асинхронного контекстного менеджера"""
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """Завершение асинхронного контекстного менеджера"""
+        await self.close()
