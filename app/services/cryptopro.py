@@ -4,8 +4,8 @@ from typing import Any
 
 import pycades
 
-from core.cryptopro_config import CryptoConstants
-from exceptions import SigningError, CertificateNotFoundError
+from app.core import CryptoConstants
+from app.core.exceptions import SigningError, CertificateNotFoundError
 
 
 logger = logging.getLogger(__name__)

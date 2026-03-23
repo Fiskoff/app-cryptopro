@@ -1,6 +1,3 @@
-from core import settings
-
-
 def main():
     pass
 

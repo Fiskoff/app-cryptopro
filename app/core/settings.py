@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
 
-from core.auth_config import AuthSettings
+from app.core.auth_config import AuthSettings
 
 
 class Settings(BaseSettings):
