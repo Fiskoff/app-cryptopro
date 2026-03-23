@@ -1,4 +1,4 @@
-from app.core.settings import settings
+from app.core.settings import settings, Settings
 from app.core.cryptopro_config import CryptoConstants
 from app.core.exceptions import (
     SigningError,
@@ -10,6 +10,7 @@ from app.core.exceptions import (
 
 __all__ = [
     "settings",
+    "Settings",
     "CryptoConstants",
     "SigningError",
     "CertificateNotFoundError",
