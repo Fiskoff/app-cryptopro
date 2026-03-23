@@ -5,6 +5,7 @@ import httpx
 from app.core import Settings, GirVuAuthError, SigningError, CertificateNotFoundError
 from app.services import CryptoProService
 
+
 logger = logging.getLogger(__name__)
 
 
