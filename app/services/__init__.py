@@ -1,4 +1,4 @@
-from app.services.cryptopro import CryptoProService
+from app.services.cryptopro_service import CryptoProService
 
 
 __all__ = [
