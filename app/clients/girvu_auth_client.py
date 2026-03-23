@@ -15,7 +15,7 @@ class GirVuAuthClient:
     def __init__(self, settings: Settings, crypto_service: CryptoProService):
         self.settings = settings
         self.crypto = crypto_service
-        self._token: str | None = None
+        self._auth_token: str | None = None
 
         self.http_client = httpx.AsyncClient(timeout=30.0)
 
@@ -59,14 +59,14 @@ class GirVuAuthClient:
         Raises:
             GirVuAuthError: Если сервер вернул ошибку или токен отсутствует.
         """
-        if self._token:
+        if self._auth_token:
             logger.warning("Токен уже получен")
 
         try:
             payload = await self._prepare_payload()
             headers = {"Content-Type": "application/json"}
 
-            logger.info(f"Отправка запроса авторизации на {self.settings.api_url}")
+            logger.info(f"Отправка запроса авторизации на {self.settings.auth.api_url}")
 
             response = await self.http_client.post(
                 url=self.settings.api_url,
@@ -81,7 +81,7 @@ class GirVuAuthClient:
                 if not token:
                     raise GirVuAuthError("Сервер вернул статус 200, но поле 'token' отсутствует в ответе.")
 
-                self._token = token
+                self._auth_token = token
                 logger.info("Токен получен")
                 return token
 

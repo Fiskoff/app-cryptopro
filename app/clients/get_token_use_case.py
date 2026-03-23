@@ -38,15 +38,15 @@ class GetTokenUseCase:
 
         try:
             with GirVuAuthClient(settings=self.settings, crypto_service=self.crypto) as client:
-                token = client.login()
+                auth_token = client.login()
                 logger.info("Токен успешно получен от сервера ГИР ВУ")
 
                 headers = client.get_auth_headers()
 
-                logger.debug(f"Сформированы заголовки: Student-Authorization: {token[:10]}...")
+                logger.debug(f"Сформированы заголовки: Student-Authorization: {auth_token[:10]}...")
 
                 return {
-                    "token": token,
+                    "token": auth_token,
                     "headers": headers,
                 }
 

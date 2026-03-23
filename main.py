@@ -15,16 +15,14 @@ def main():
         crypto_service = CryptoProService(thumbprint=thumbprint)
 
         use_case_get_token = GetTokenUseCase(settings=settings.auth, crypto_service=crypto_service)
-        result = use_case_get_token.execute()
+        auth_result = use_case_get_token.execute()
+        logger.info(f"Token: {auth_result['token']}")
 
-        logger.info(f"Token: {result['token']}")
 
     except CertificateNotFoundError as error:
         logger.error(f"Ошибка сертификата: {error}")
-
     except GirVuAuthError as error:
         logger.error(f"Ошибка авторизации: {error}")
-
     except Exception as error:
         logger.exception(f"Критическая ошибка: {error}")
 
