@@ -1,5 +1,5 @@
-from girvu_auth_client import GirVuAuthClient
-from get_token_use_case import GetTokenUseCase
+from app.clients.girvu_auth_client import GirVuAuthClient
+from app.clients.get_token_use_case import GetTokenUseCase
 
 
 __all__ = [
