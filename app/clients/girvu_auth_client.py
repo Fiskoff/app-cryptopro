@@ -30,7 +30,7 @@ class GirVuAuthClient:
             GirVuAuthError: Если ошибка при подписании
         """
         try:
-            data_to_sign = self.settings.signature_string
+            data_to_sign = self.settings.auth.signature_string
 
             signature_b64 = await self.crypto.signature_data(data_to_sign)
 
@@ -38,8 +38,8 @@ class GirVuAuthClient:
 
             payload = {
                 "organization": {
-                    "ogrn": self.settings.OGRN,
-                    "kpp": self.settings.KPP
+                    "ogrn": self.settings.auth.OGRN,
+                    "kpp": self.settings.auth.KPP
                 },
                 "sign": signature_b64
             }
@@ -69,7 +69,7 @@ class GirVuAuthClient:
             logger.info(f"Отправка запроса авторизации на {self.settings.auth.api_url}")
 
             response = await self.http_client.post(
-                url=self.settings.api_url,
+                url=self.settings.auth.api_url,
                 json=payload,
                 headers=headers
             )
@@ -105,7 +105,7 @@ class GirVuAuthClient:
     @property
     def token(self) -> str | None:
         """Возвращает текущий активный токен."""
-        return self._token
+        return self._auth_token
 
     def get_auth_headers(self) -> dict:
         """
@@ -117,11 +117,11 @@ class GirVuAuthClient:
         Raises:
             GirVuAuthError: Если токен еще не получен.
         """
-        if not self._token:
+        if not self._auth_token:
             raise GirVuAuthError("Токен не получен. Сначала вызовите метод login().")
 
         return {
-            "Student-Authorization": self._token,
+            "Student-Authorization": self._auth_token,
             "Content-Type": "application/json"
         }
 
