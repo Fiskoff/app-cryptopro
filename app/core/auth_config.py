@@ -1,9 +1,8 @@
-from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic import BaseModel, Field
 
 
-class AuthSettings(BaseSettings):
-    """Настройки модуля авторизации"""
+class AuthSettings(BaseModel):
+    """Настройки модуля авторизации — только валидация данных"""
 
     OGRN: str = Field(default="1024200708069")
     KPP: str = Field(default="420501001")
