@@ -1,4 +1,3 @@
-from app.core.settings import settings, Settings
 from app.core.cryptopro_config import CryptoConstants
 from app.core.loger_config import setup_logger
 from app.core.exceptions import (
@@ -7,6 +6,7 @@ from app.core.exceptions import (
     GirVuError,
     GirVuAuthError
 )
+from app.core.settings import settings, Settings
 
 
 __all__ = [
