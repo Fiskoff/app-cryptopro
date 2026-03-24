@@ -16,7 +16,7 @@ class GetTokenUseCase:
         self.settings = settings
         self.crypto = crypto_service
 
-    def execute(self) -> Dict[str, Any]:
+    async def execute(self) -> Dict[str, Any]:
         """
         Выполняет полный цикл авторизации.
 
@@ -37,8 +37,8 @@ class GetTokenUseCase:
         logger.info(f"Инициализация сценария получения токена для отпечатка: {thumbprint}")
 
         try:
-            with GirVuAuthClient(settings=self.settings, crypto_service=self.crypto) as client:
-                auth_token = client.login()
+            async with GirVuAuthClient(settings=self.settings, crypto_service=self.crypto) as client:
+                auth_token = await client.login()
                 logger.info("Токен успешно получен от сервера ГИР ВУ")
 
                 headers = client.get_auth_headers()
@@ -52,6 +52,6 @@ class GetTokenUseCase:
 
         except GirVuAuthError:
             raise
-        except Exception as e:
+        except Exception as error:
             logger.exception("Произошла непредвиденная ошибка в процессе авторизации")
-            raise GirVuAuthError(f"Внутренняя ошибка сценария авторизации: {e}") from e
+            raise GirVuAuthError(f"Внутренняя ошибка сценария авторизации: {error}") from error
