@@ -1,5 +1,4 @@
 import logging
-import base64
 from typing import Any
 
 import pycades
@@ -11,10 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class CryptoProService:
-    """
-    Сервис для работы с криптопровайдером CryptoPro CSP через pycades.
-    Предназначен для подписи данных в формате, требуемом API ГИР ВУ.
-    """
+    """Сервис для работы с криптопровайдером CryptoPro CSP через pycades."""
 
     def __init__(self, thumbprint: str):
         self._thumbprint = thumbprint
@@ -37,7 +33,7 @@ class CryptoProService:
 
         store: pycades.Store | None = None
         try:
-            logger.debug(f"Поиск сертификата с отпечатком: {self._thumbprint}")
+            logger.debug(f"Поиск сертификата с отпечатком: {self._thumbprint[:20]}...")
             store = pycades.Store()
             store.Open(
                 CryptoConstants.STORE_LOCATION,
@@ -45,19 +41,24 @@ class CryptoProService:
                 CryptoConstants.STORE_FLAGS
             )
 
-            certificates_collection = store.Certificates.FindByThumbprint(self._thumbprint)
+            certificates = store.Certificates
+            count = certificates.Count
 
-            if certificates_collection.Count == 0:
-                raise CertificateNotFoundError(
-                    f"Сертификат '{self._thumbprint}' не найден в хранилищеCurrentUser\\MY. "
-                    f"Проверьте установку сертификата и доступность токена."
-                )
+            for i in range(1, count + 1):
+                certificate = certificates.Item(i)
+                if certificate.Thumbprint.lower() == self._thumbprint.lower():
+                    if not certificate.HasPrivateKey():
+                        raise CertificateNotFoundError(
+                            f"Сертификат '{self._thumbprint[:20]}...' найден, но закрытый ключ недоступен. "
+                            f"Проверьте доступность токена."
+                        )
+                    self._certificate_cache = certificate
+                    logger.info(f"Сертификат успешно загружен: {certificate.SubjectName}")
+                    return certificate
 
-            certificate = certificates_collection.Item(1)
-            self._validate_certificate_object(certificate, self._thumbprint)
-            self._certificate_cache = certificate
-            logger.info(f"Сертификат успешно загружен: {certificate.SubjectName}")
-            return certificate
+            raise CertificateNotFoundError(
+                f"Сертификат '{self._thumbprint[:20]}...' не найден в хранилище CurrentUser\\MY. "
+            )
 
         except Exception as error:
             logger.error(f"Ошибка доступа к хранилищу сертификатов: {error}")
@@ -86,52 +87,54 @@ class CryptoProService:
         """
 
         if not certificate.HasPrivateKey:
-            logger.error(f"У сертификата '{thumbprint}' отсутствует закрытый ключ.")
+            logger.error(f"У сертификата '{thumbprint[:20]}...' отсутствует закрытый ключ.")
             raise CertificateNotFoundError(
-                f"Сертификат '{thumbprint}' найден, но у него отсутствует закрытый ключ. "
+                f"Сертификат '{thumbprint[:20]}...' найден, но у него отсутствует закрытый ключ. "
                 f"Подпись невозможна. Убедитесь, что контейнер закрытого ключа установлен и доступен."
             )
-        logger.debug(f"Проверка закрытого ключа для '{thumbprint}' успешна.")
+        logger.debug(f"Проверка закрытого ключа для '{thumbprint[:20]}...' успешна.")
 
-    async def signature_data(self, data: str) -> str:
+    async def signature_data(self, data_str: str) -> str:
         """
-        Создает открепленную электронную подпись (Detached Signature) для строки данных
-        Использует ГОСТ Р 34.11-2012 (256 бит), результат кодируется в Base64
+        Создание откреплённой электронной подписи (CAdES-BES)
 
         Args:
-            data (str): Строка данных для подписи (строка 'ОГРН+КПП').
+            data_str (str): Строка данных для подписи (строка 'ОГРН+КПП').
 
         Returns:
             str: Подпись в формате Base64.
 
         Raises:
             SigningError: Если процесс подписания не удался.
+
         """
 
-        if not data:
-            raise ValueError("Данные для подписи не могут быть пустыми.")
-
         try:
+            logger.debug(f"Подпись данных (длина: {len(data_str)})")
+
             certificate = self._get_certificate()
 
-            content_info = pycades.ContentInfo()
-            content_info.ContentType = CryptoConstants.CONTENT_TYPE
-            content_info.Content = data.encode('utf-8')
+            signer = pycades.Signer()
+            signer.Certificate = certificate
+            signer.CheckCertificate = True
+            signer.Options = CryptoConstants.SIGNATURE_OPTION
 
-            cp_signature = pycades.CPSignature()
-            cp_signature.SignerCertificate = certificate
-            cp_signature.Options = CryptoConstants.SIGNATURE_OPTION
-            cp_signature.HashAlgorithm.Algorithm = CryptoConstants.HASH_ALGO
+            signed_data = pycades.SignedData()
+            signed_data.Content = data_str
 
-            signature_bytes = cp_signature.SignContent(content_info)
-            signature_b64 = base64.b64encode(signature_bytes).decode('ascii')
+            signature_base64 = signed_data.SignCades(signer, pycades.CADESCOM_CADES_BES)
 
-            logger.debug(f"Успешно создана подпись длиной {len(signature_b64)} символов.")
-            return signature_b64
+            logger.info("Подпись успешно создана")
+            return signature_base64
 
+        except CertificateNotFoundError:
+            raise
+        except AttributeError as error:
+            logger.error(f"Ошибка API pycades: {error}")
+            raise SigningError(f"Неверный вызов pycades API: {error}")
         except Exception as error:
-            logger.exception("Критическая ошибка при создании подписи")
-            raise SigningError(f"Не удалось подписать данные: {error}") from error
+            logger.error(f"Критическая ошибка при создании подписи", exc_info=True)
+            raise SigningError(f"Не удалось подписать данные: {error}")
 
     @property
     def subject_name(self) -> str:
