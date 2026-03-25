@@ -17,7 +17,7 @@ class GirVuAuthClient:
         self.crypto = crypto_service
         self._auth_token: str | None = None
 
-        self.http_client = httpx.AsyncClient(timeout=30.0)
+        self.http_client = httpx.AsyncClient(timeout=120.0)
 
     async def _prepare_payload(self) -> dict:
         """
