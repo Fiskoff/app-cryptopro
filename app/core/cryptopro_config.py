@@ -13,5 +13,5 @@ class CryptoConstants:
 
     HASH_ALGO = pycades.CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256
 
-    SIGNATURE_OPTION = 1  # 0 = Embedded, 1 = Detached
-    CONTENT_TYPE = 0  # 0 = Data, 1 = SignedData
+    SIGNATURE_OPTION = 1
+    CONTENT_TYPE = 0
