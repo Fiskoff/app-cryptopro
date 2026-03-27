@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from app.core.auth_config import AuthSettings
+from app.core.configs.auth_config import AuthSettings
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
