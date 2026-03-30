@@ -12,6 +12,10 @@ class DataBaseConfig(BaseModel):
     port : int = Field(...)
     db_name : str= Field(...)
 
+    echo: bool = True,
+    pool_size: int = 5,
+    max_overflow: int = 10,
+
     @property
     def connection_string(self) -> str:
         return f"{self.DBMS}+{self.driver}://{self.user}:{self.password}@{self.host}:{self.port}/{self.db_name}"
