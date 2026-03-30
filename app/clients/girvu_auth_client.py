@@ -2,7 +2,7 @@ import logging
 
 import httpx
 
-from app.core import Settings, GirVuAuthError, SigningError, CertificateNotFoundError
+from core import Settings, GirVuAuthError, SigningError, CertificateNotFoundError
 from app.services import CryptoProService
 
 

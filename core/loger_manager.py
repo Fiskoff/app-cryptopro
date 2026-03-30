@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from app.core.configs.logger_config import LoggerConfig
+from core.configs.logger_config import LoggerConfig
 
 
 class LoggerManager:
@@ -42,5 +42,5 @@ class LoggerManager:
     @staticmethod
     def quick(name: str | None = None, level: str = "INFO") -> logging.Logger:
         """Быстрый способ получить логгер без создания конфига."""
-        
+
         return LoggerManager.setup(name=name, level=level)

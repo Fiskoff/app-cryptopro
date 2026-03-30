@@ -1,8 +1,8 @@
 import asyncio
 
-from app.core import settings, GirVuAuthError, CertificateNotFoundError
-from app.core.configs.logger_config import LoggerConfig
-from app.core.loger_manager import LoggerManager
+from core import settings, GirVuAuthError, CertificateNotFoundError
+from core.configs.logger_config import LoggerConfig
+from core.loger_manager import LoggerManager
 from app.services import CryptoProService
 from app.clients import GetTokenUseCase
 

@@ -3,7 +3,7 @@ from typing import Any
 
 import pycades
 
-from app.core import CryptoConstants, SigningError, CertificateNotFoundError
+from core import CryptoConstants, SigningError, CertificateNotFoundError
 
 
 logger = logging.getLogger(__name__)

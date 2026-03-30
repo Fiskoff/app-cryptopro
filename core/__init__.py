@@ -1,11 +1,11 @@
-from app.core.configs.cryptopro_config import CryptoConstants
-from app.core.exceptions import (
+from core.configs.cryptopro_config import CryptoConstants
+from core.exceptions import (
     SigningError,
     CertificateNotFoundError,
     GirVuError,
     GirVuAuthError
 )
-from app.core.settings import settings, Settings
+from core.settings import settings, Settings
 
 
 __all__ = [

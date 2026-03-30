@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, Any
 
-from app.core import Settings, GirVuAuthError
+from core import Settings, GirVuAuthError
 from app.services import CryptoProService
 from app.clients import GirVuAuthClient
 
