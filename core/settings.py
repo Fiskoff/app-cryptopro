@@ -7,7 +7,7 @@ from core.configs.auth_config import AuthConfig
 from core.configs.database_config import DataBaseConfig
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_FILE = BASE_DIR / ".env"
 
 
