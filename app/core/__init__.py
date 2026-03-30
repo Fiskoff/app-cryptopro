@@ -1,5 +1,4 @@
 from app.core.configs.cryptopro_config import CryptoConstants
-from app.core.configs.logger_config import setup_logger
 from app.core.exceptions import (
     SigningError,
     CertificateNotFoundError,
@@ -13,7 +12,6 @@ __all__ = [
     "settings",
     "Settings",
     "CryptoConstants",
-    "setup_logger",
     "SigningError",
     "CertificateNotFoundError",
     "GirVuError",
