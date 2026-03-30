@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from app.core.configs.auth_config import AuthSettings
+from app.core.configs.auth_config import AuthConfig
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -13,7 +13,7 @@ ENV_FILE = BASE_DIR / ".env"
 class Settings(BaseSettings):
     """Глобальные настройки проекта. Единственный класс, который читает .env"""
 
-    auth: AuthSettings = Field(default_factory=AuthSettings)
+    auth: AuthConfig = Field(default_factory=AuthConfig)
 
     model_config = SettingsConfigDict(
         env_file=str(ENV_FILE),

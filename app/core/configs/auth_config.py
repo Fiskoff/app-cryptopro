@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
 
-class AuthSettings(BaseModel):
+class AuthConfig(BaseModel):
     """Настройки модуля авторизации — только валидация данных"""
 
     OGRN: str = Field(default="1024200708069")
