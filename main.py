@@ -1,13 +1,14 @@
 import asyncio
-import logging
 
-from app.core import setup_logger, settings, GirVuAuthError, CertificateNotFoundError
+from app.core import settings, GirVuAuthError, CertificateNotFoundError
+from app.core.configs.logger_config import LoggerConfig
+from app.core.loger_manager import LoggerManager
 from app.services import CryptoProService
 from app.clients import GetTokenUseCase
 
 
-setup_logger(level="DEBUG")
-logger = logging.getLogger(__name__)
+config = LoggerConfig(name="main", level="DEBUG")
+logger = LoggerManager.setup(config)
 
 async def main():
     logger.info("Запуск процедуры авторизации ГИР ВУ")
@@ -16,7 +17,7 @@ async def main():
         crypto_service = CryptoProService(thumbprint=thumbprint)
         use_case_get_token = GetTokenUseCase(settings=settings, crypto_service=crypto_service)
         auth_result = await use_case_get_token.execute()
-        logger.info(f"Token: {auth_result['token']}")
+        logger.info(f"Token: {auth_result['token'][:10]}")
 
 
     except CertificateNotFoundError as error:
