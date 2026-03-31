@@ -7,6 +7,8 @@ from core.models.base_model import BaseModel
 
 
 class TokenModel(BaseModel):
+    """ORM модель таблицы auth_tokens"""
+
     __tablename__ = 'auth_tokens'
     __table_args__ = (
         Index("ix_gir_token_active", "is_active", "expires_at"),
