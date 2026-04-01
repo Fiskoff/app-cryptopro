@@ -18,32 +18,20 @@ class GirVuAuthError(GirVuError):
     pass
 
 
-class TokenError(Exception):
-    """Базовое исключение для токенов."""
+class CryptoError(Exception):
+    """Базовое исключение криптографии."""
 
     pass
 
 
-class TokenNotFoundError(TokenError):
-    """Токен не найден."""
+class EncryptError(CryptoError):
+    """Ошибка шифрования."""
 
     pass
 
 
-class TokenExpiredError(TokenError):
-    """Токен истёк."""
-
-    pass
-
-
-class TokenInvalidError(TokenError):
-    """Токен невалиден."""
-
-    pass
-
-
-class EncryptionError(TokenError):
-    """Ошибка шифрования/дешифрования."""
+class DecryptError(CryptoError):
+    """Ошибка дешифрования."""
 
     pass
 
