@@ -4,11 +4,9 @@ from core.exceptions import (
     CertificateNotFoundError,
     GirVuError,
     GirVuAuthError,
-    TokenError,
-    TokenExpiredError,
-    TokenInvalidError,
-    TokenNotFoundError,
-    EncryptionError,
+    CryptoError,
+    EncryptError,
+    DecryptError
 )
 from core.settings import settings, Settings
 
@@ -24,9 +22,7 @@ __all__ = [
     "GirVuError",
     "GirVuAuthError",
 
-    "TokenError",
-    "TokenExpiredError",
-    "TokenInvalidError",
-    "TokenNotFoundError",
-    "EncryptionError",
+    "CryptoError",
+    "EncryptError",
+    "DecryptError",
 ]
