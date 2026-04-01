@@ -16,3 +16,34 @@ class GirVuError(Exception):
 class GirVuAuthError(GirVuError):
     """Ошибка авторизации (получения токена)."""
     pass
+
+
+class TokenError(Exception):
+    """Базовое исключение для токенов."""
+
+    pass
+
+
+class TokenNotFoundError(TokenError):
+    """Токен не найден."""
+
+    pass
+
+
+class TokenExpiredError(TokenError):
+    """Токен истёк."""
+
+    pass
+
+
+class TokenInvalidError(TokenError):
+    """Токен невалиден."""
+
+    pass
+
+
+class EncryptionError(TokenError):
+    """Ошибка шифрования/дешифрования."""
+
+    pass
+
